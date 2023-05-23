@@ -2,19 +2,19 @@
 # This script indefinitely writes I am alive! to the file /tmp/my_process
 PIDFILE=/var/run/my_process.pid
 
-if [ "$1" == "start" ]; then
+if [ "$PIDFILE" == "start" ]; then
 	./manage_my_process &
-	echo "$1" > "$PIDFILE"
+	echo "$!" > "$PIDFILE"
 	echo "manage_my_process started"
-elif [ "$1" == "stop" ]; then
+elif [ "$PIDFILE" == "stop" ]; then
 	pkill -f ./manage_my_process
 	sudo rm /var/run/my_process.pid
 	echo "manage_my_process stopped"
-elif [ "$1" == "restart" ]; then
+elif [ "$PIDFILE" == "restart" ]; then
 	pkill -f ./manage_my_process
 	sudo rm /var/run/my_process.pid
 	./manage_my_process &
-	echo "$1" > "$PIDFILE"
+	echo "$!" > "$PIDFILE"
 	echo "manage_my_process restarted"
 else
 	echo "Usage: manage_my_process {start|stop|restart}"
