@@ -1,32 +1,23 @@
 #!/usr/bin/env bash
 # This script indefinitely writes I am alive! to the file /tmp/my_process
-startme()
-{
-	./manage_my_process &
-	echo "$!" > /var/run/my_process.pid
-}
-stopme()
-{
-	sudo kill -15 "$(cat /var/run/manage_my_process.pid)"
-	rm -f /var/run/my_process.pid
-}
-case "$1" in
-	start) 
-	echo "startme" > /var/run/my_process.pid
-	echo "manage_my_process started"
-	./manage_my_process start &
-	;;
-stop) 
-	rm /var/run/my_process.pid
-	echo "manage_my_process stopped"
-	pkill -f ./manage_my_process -15 &
-	;;
-restart) 
-	echo "stopme startme" > /var/run/my_process.pid
-	echo "manage_my_process restarted"
-	pkill -f ./manage_my_process -15 &
-	;;
-*) echo "Usage: manage_my_process {start|stop|restart}"
-	;;
+case $1 in
+	start)
+		./manage_my_process &
+		echo $! > /var/run/my_process.pid &
+		echo "manage_my_process started"
+		;;
+	stop)
+		kill "$(cat "/var/run/manage_my_process.pid")" &
+		rm /var/run/my_process.pid &
+		echo "manage_my_process stopped"
+		;;
+	restart)
+		echo "manage_my_process restarted" > &&
+		kill "$(cat "/var/run/my_process.pid")" &&
+		rm /var/run/my_process.pid &&
+		./manage_my_process &&
+		echo $! > /var/run/my_process.pid
+		;;
+	*) echo "Usage: manage_my_process {start|stop|restart}"
+		;;
 esac
-exit 0
