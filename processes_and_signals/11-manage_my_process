@@ -1,42 +1,27 @@
 #!/usr/bin/env bash
 # This script indefinitely writes I am alive! to the file /tmp/my_process
-FILE=/var/run/my_process.pid
-
-function error()
+startme()
 {
-	echo "Usage: manage_my_process {start|stop|restart}"
-}
-function start()
-{
-	(./manage_my_process) &
-	echo $$ > $FILE
-	echo "manage_my_process started"
-}
-function stop()
-{
-	pkill -f ./manage_my_process
-	sudo rm $FILE
-	echo "manage_my_process stopped"
-}
-function restart()
-{
-	pkill -f ./manage_my_process
-	rm $FILE
 	./manage_my_process &
-	echo $$ > $FILE
-	echo "manage_my_process restarted"
+	echo "$!" > /var/run/my_process.pid
 }
-if [ $# -ne 1 ]; then
-	error
-else
-	case ${1} in
-		"start")
-			start;;
-		"restart")
-			restart;;
-		"stop")
-			stop;;
-		*)
-			error;;
-	esac
-fi
+stopme()
+{
+	sudo kill -15 "$(cat /var/run/manage_my_process.pid)"
+	rm -f /var/run/my_process.pid
+}
+case "$1" in
+	start) startme
+	echo "manage_my_process started"
+	;;
+stop) stopme
+	echo "manage_my_process stopped"
+	;;
+restart) stopme
+	startme
+	echo "manage_my_process restarted"
+	;;
+*) echo "Usage: manage_my_process {start|stop|restart}"
+	;;
+esac
+exit 0
