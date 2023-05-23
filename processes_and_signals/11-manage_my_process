@@ -11,15 +11,20 @@ stopme()
 	rm -f /var/run/my_process.pid
 }
 case "$1" in
-	start) startme
+	start) 
+	echo "startme" > /var/run/my_process.pid
 	echo "manage_my_process started"
+	./manage_my_process start &
 	;;
-stop) stopme
+stop) 
+	rm /var/run/my_process.pid
 	echo "manage_my_process stopped"
+	pkill -f ./manage_my_process -15 &
 	;;
-restart) stopme
-	startme
+restart) 
+	echo "stopme startme" > /var/run/my_process.pid
 	echo "manage_my_process restarted"
+	pkill -f ./manage_my_process -15 &
 	;;
 *) echo "Usage: manage_my_process {start|stop|restart}"
 	;;
